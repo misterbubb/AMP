@@ -59,7 +59,7 @@ namespace AMP.Network.Client.NetworkComponents {
         public override void ManagedUpdate() {
             try {
                 if (IsSending()) return;
-                if (itemNetworkData.holdingStates == null || itemNetworkData.holdingStates.Length > 0) return;
+                if (itemNetworkData.holdingStates != null && itemNetworkData.holdingStates.Length > 0) return;
                 if (transform == null) return;
             }catch(NullReferenceException) {
                 return;
