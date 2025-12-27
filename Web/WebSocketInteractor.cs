@@ -220,7 +220,7 @@ namespace AMP.Web {
                 if(client.Connected) {
                     try {
                         SendMessageToClient(client, "ERROR|" + errorPacket.message);
-                    } catch { }
+                    } catch (Exception e) { Log.Debug(Defines.WEB_INTERFACE, $"Failed to send error to client: {e.Message}"); }
                 }
             }
         }
@@ -244,7 +244,7 @@ namespace AMP.Web {
                 if(client.Connected) {
                     try {
                         SendMessageToClient(client, "MAPINFO|" + level + "|" + mode);
-                    } catch { }
+                    } catch (Exception e) { Log.Debug(Defines.WEB_INTERFACE, $"Failed to send map info to client: {e.Message}"); }
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace AMP.Web {
                 if(client.Connected) {
                     try {
                         SendMessageToClient(client, "SERVER|" + server);
-                    } catch { }
+                    } catch (Exception e) { Log.Debug(Defines.WEB_INTERFACE, $"Failed to send server details to client: {e.Message}"); }
                 }
             }
         }
@@ -287,7 +287,7 @@ namespace AMP.Web {
                 if(client.Connected) {
                     try {
                         SendMessageToClient(client, "CLEARSERVER");
-                    } catch { }
+                    } catch (Exception e) { Log.Debug(Defines.WEB_INTERFACE, $"Failed to clear server details for client: {e.Message}"); }
                 }
             }
         }

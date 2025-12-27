@@ -12,13 +12,13 @@ namespace AMP.Useless {
 
             try {
                 ids.Add(DiscordIntegration.Instance.currentUser.Id.ToString());
-            } catch { }
+            } catch (Exception) { /* Discord not initialized, skip */ }
 #if STEAM  
             try {
                 if(SteamIntegration.IsInitialized && SteamIntegration.Username != null && SteamIntegration.Username.Length > 0) {
                     ids.Add(SteamIntegration.SteamID.ToString());
                 }
-            }catch { }
+            } catch (Exception) { /* Steam not initialized, skip */ }
 #endif
 
             return FormatSpecialName(name, ids.ToArray());

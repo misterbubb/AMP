@@ -1175,7 +1175,7 @@ namespace AMP.UI {
                     #endif
 
                     serverDebugMessage.text = message;
-                } catch { }
+                } catch (Exception e) { Log.Debug(Defines.AMP, $"Failed to update debug message: {e.Message}"); }
                 #endif
                 
                 serverJoinCodeLabel.gameObject.SetActive(serverJoinCodeMessage.text.Length > 0);

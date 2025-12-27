@@ -103,7 +103,7 @@ namespace AMP.SupportFunctions {
             if(options.ContainsKey(IsAreaOption)) {
                 try {
                     return !bool.Parse(options[IsAreaOption]);
-                } catch { }
+                } catch (Exception e) { Log.Debug(Defines.AMP, $"Failed to parse IsArea option: {e.Message}"); }
             }
 
             return true;
