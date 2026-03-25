@@ -37,6 +37,11 @@ namespace AMP.Network.Client {
         private const int hangTime = 5;
         private const int restartTime = 20;
 
+        // Finger pose tracking - store last sent weights to detect changes
+        private float[] lastLeftFingerWeights = new float[5];
+        private float[] lastRightFingerWeights = new float[5];
+        private const float FINGER_CHANGE_THRESHOLD = 0.05f;
+
         public void StartThreads () {
             StartCoroutine(BaseTickThread());
             StartCoroutine(PlayerTickThread());
@@ -447,16 +452,7 @@ namespace AMP.Network.Client {
                 if(Config.PLAYER_FULL_BODY_SYNCING) {
                     new PlayerRagdollPacket(syncData.myPlayerData).SendToServerUnreliable();
 
-                    /*
-                    if(Player.currentCreature.handLeft.grabbedHandle == null) {
-                        Log.Warn("handLeft");
-                        new HandPositionPacket(syncData.myPlayerData, Side.Left).SendToServerUnreliable();
-                    }
-                    if(Player.currentCreature.handRight.grabbedHandle == null) {
-                        Log.Warn("handRight");
-                        new HandPositionPacket(syncData.myPlayerData, Side.Right).SendToServerUnreliable();
-                    }
-                    */
+                    SendFingerPoses();
                 } else {
                     new PlayerPositionPacket(syncData.myPlayerData).SendToServerUnreliable();
                 }
@@ -470,6 +466,42 @@ namespace AMP.Network.Client {
                 CheckHandPose(Player.currentCreature.handRight);
             }
             */
+        }
+
+        private void SendFingerPoses() {
+            if(Player.currentCreature == null) return;
+
+            if(HasFingerPoseChanged(Player.currentCreature.handLeft, lastLeftFingerWeights)) {
+                new HandPositionPacket(syncData.myPlayerData, Side.Left).SendToServerUnreliable();
+            }
+            if(HasFingerPoseChanged(Player.currentCreature.handRight, lastRightFingerWeights)) {
+                new HandPositionPacket(syncData.myPlayerData, Side.Right).SendToServerUnreliable();
+            }
+        }
+
+        private bool HasFingerPoseChanged(RagdollHand hand, float[] lastWeights) {
+            if(hand == null || hand.poser == null) return false;
+
+            float[] current = {
+                hand.poser.thumbCloseWeight,
+                hand.poser.indexCloseWeight,
+                hand.poser.middleCloseWeight,
+                hand.poser.ringCloseWeight,
+                hand.poser.littleCloseWeight
+            };
+
+            bool changed = false;
+            for(int i = 0; i < 5; i++) {
+                if(Mathf.Abs(current[i] - lastWeights[i]) > FINGER_CHANGE_THRESHOLD) {
+                    changed = true;
+                    break;
+                }
+            }
+
+            if(changed) {
+                for(int i = 0; i < 5; i++) lastWeights[i] = current[i];
+            }
+            return changed;
         }
 
         /*
